@@ -1,7 +1,8 @@
 package com.financial_times;
 
-import com.financial_times.Elevator.FloorRange;
-import com.financial_times.Elevator.Request;
+//import com.financial_times.Elevator.FloorRange;
+
+
 
 public class Elevator {
 
@@ -14,7 +15,7 @@ public class Elevator {
 	private volatile int currentFloor = 0;
 	private volatile int currentPassengersCount = 0;
 	private volatile double currentCapacity = 0;
-	private FloorRange floorRange = null;
+	private static FloorRange floorRange = null;
 
 	public Elevator(String id, int maxPassengersCount, double maxCapacity, int minFloor, int maxFloor)
 			throws ElevatorException {
@@ -34,7 +35,7 @@ public class Elevator {
 		}
 		this.maxCapacity = maxCapacity;
 		this.currentFloor = minFloor;
-		this.floorRange = new FloorRange(minFloor, maxFloor);
+		Elevator.floorRange = new FloorRange(minFloor, maxFloor);
 	}
 
 	static boolean isValidWeight(double weight) {
@@ -49,8 +50,8 @@ public class Elevator {
 		return null != id;
 	}
 
-	private boolean isValidFloor(int floor) {
-		return this.floorRange.containsFloor(floor);
+	static boolean isValidFloor(int floor) {
+		return floorRange.containsFloor(floor);
 	}
 
 	boolean canTakeMorePassengers() {
@@ -99,8 +100,7 @@ public class Elevator {
 		{
 			Thread.sleep(1000);
 		} catch (InterruptedException e)
-		{
-			// TODO Auto-generated catch block
+		{ 
 			e.printStackTrace();
 		}
 		System.out.println("Elevator #" + this.id + " stopped at floor " + this.currentFloor + ".");

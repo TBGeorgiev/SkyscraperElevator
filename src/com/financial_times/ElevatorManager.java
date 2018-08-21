@@ -12,10 +12,10 @@ public final class ElevatorManager {
 
 	private ArrayList<Elevator> elevatorList = null;
 	private HashSet<String> elevatorIdList = null;
-	private final int maxElevatorPassengersCount;
-	private final int maxElevatorCapacity;
-	private final int minFloor;
-	private final int maxFloor;
+	private static int maxElevatorPassengersCount;
+	private static int maxElevatorCapacity;
+	private static int minFloor;
+	private static int maxFloor;
 	private RequestFetcher requestFetcher = null;
 
 	public ElevatorManager(int maxElevatorPassengersCount, int maxElevatorCapacity, int minFloor, int maxFloor)
@@ -24,10 +24,10 @@ public final class ElevatorManager {
 		this.requestFetcher = new RequestFetcher();
 		if (Elevator.isValidPassengersCount(maxElevatorPassengersCount)
 				&& Elevator.isValidWeight(maxElevatorCapacity)) {
-			this.maxElevatorPassengersCount = maxElevatorPassengersCount;
-			this.maxElevatorCapacity = maxElevatorCapacity;
-			this.minFloor = minFloor;
-			this.maxFloor = maxFloor;
+			ElevatorManager.maxElevatorPassengersCount = maxElevatorPassengersCount;
+			ElevatorManager.maxElevatorCapacity = maxElevatorCapacity;
+			ElevatorManager.minFloor = minFloor;
+			ElevatorManager.maxFloor = maxFloor;
 		} else {
 			throw new ElevatorManagerException("Some of the provided data is incorrect! Cannot configure elevators");
 		}
@@ -37,8 +37,8 @@ public final class ElevatorManager {
 		this.elevatorList = new ArrayList<Elevator>(elevatorsCount);
 		for (int i = 0; i < elevatorsCount; i++) {
 			try {
-				this.elevatorList.add(new Elevator(this.generateElevatorId(), this.maxElevatorPassengersCount,
-						this.maxElevatorCapacity, this.minFloor, this.maxFloor));
+				this.elevatorList.add(new Elevator(this.generateElevatorId(), ElevatorManager.maxElevatorPassengersCount,
+						ElevatorManager.maxElevatorCapacity, ElevatorManager.minFloor, ElevatorManager.maxFloor));
 			} catch (ElevatorException e) {
 				System.err.println("[ERROR] Improper data for elevator configuration: " + e.getMessage());
 				System.err.flush();
@@ -51,7 +51,6 @@ public final class ElevatorManager {
 		Random random = new Random();
 		StringBuilder sb = new StringBuilder();
 		sb.append(charset.charAt(random.nextInt(charset.length()))).append(random.nextInt(99) + 1);
-		System.out.println(sb.toString());
 		return sb.toString();
 	}
 
@@ -65,7 +64,7 @@ public final class ElevatorManager {
 				}
 			} catch (ElevatorManagerException e)
 			{
-				e.getMessage();
+				System.out.println(e.getMessage());
 			}
 		}
 		System.out.println("Program closed.");
@@ -86,10 +85,12 @@ public final class ElevatorManager {
 			
 		}
 	}
+	
+	
 
 	private void manageRequests(LinkedList<Request> requestList) {
 		for (Request r : requestList) {
-			this.getMostOptimalElevator(r).processRequest(r);
+			this.getMostOptimalElevator(r).processRequest(r);		
 		}
 	}
 
@@ -99,7 +100,7 @@ public final class ElevatorManager {
 
 	private Elevator getMostOptimalElevator(Request request) {
 		Elevator mostOptimalElevator = null;
-		int mostOptimalFloorDifference = this.maxFloor - this.minFloor; // necessary for defining most optimal elevator
+		int mostOptimalFloorDifference = ElevatorManager.maxFloor - ElevatorManager.minFloor; // necessary for defining most optimal elevator
 		while (mostOptimalElevator == null) {
 			for (Elevator e : this.elevatorList) {
 				if (e.canTakeMorePassengers()) {
@@ -113,4 +114,14 @@ public final class ElevatorManager {
 		}
 		return mostOptimalElevator;
 	}
+
+	static int getMaxElevatorPassengersCount() {
+		return maxElevatorPassengersCount;
+	}
+
+	static int getMaxElevatorCapacity() {
+		return maxElevatorCapacity;
+	}
+	
+	
 }
