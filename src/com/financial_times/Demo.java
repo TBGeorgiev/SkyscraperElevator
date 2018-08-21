@@ -9,19 +9,11 @@ public class Demo {
 				elevatorManager.configureElevators(3);
 				elevatorManager.execute();
 			} catch (ElevatorException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-//			RequestFetcher requestFetcher = new RequestFetcher();
-//			requestFetcher.gatherRequestsFromConsole();
-			
-			
+
 		} catch (ElevatorManagerException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-
 	}
-
 }

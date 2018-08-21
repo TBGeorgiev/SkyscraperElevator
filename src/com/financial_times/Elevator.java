@@ -1,7 +1,9 @@
 package com.financial_times;
 
+import com.financial_times.Elevator.FloorRange;
+import com.financial_times.Elevator.Request;
+
 public class Elevator {
-	// TODO ako ima vreme turi logger obekt
 
 	private final String id;
 	private volatile Boolean isGoingUp = null; // null value when elevator has stopped
@@ -13,7 +15,6 @@ public class Elevator {
 	private volatile int currentPassengersCount = 0;
 	private volatile double currentCapacity = 0;
 	private FloorRange floorRange = null;
-	// TODO collection for requests
 
 	public Elevator(String id, int maxPassengersCount, double maxCapacity, int minFloor, int maxFloor)
 			throws ElevatorException {
@@ -79,6 +80,7 @@ public class Elevator {
 	}
 
 	void processRequest(Request request) {
+		transport(currentFloor, request.startingFloor);
 		System.out.println(request.passengersCount + " passangers got inside the elevator at floor " + currentFloor);
 		System.out.println("Weight increased by: " + request.passengersWeight + " kg.");
 		this.currentPassengersCount += request.passengersCount;
@@ -93,6 +95,14 @@ public class Elevator {
 	}
 
 	private void stop() {
+		try
+		{
+			Thread.sleep(1000);
+		} catch (InterruptedException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		System.out.println("Elevator #" + this.id + " stopped at floor " + this.currentFloor + ".");
 		this.isGoingUp = null;
 	}
@@ -106,24 +116,25 @@ public class Elevator {
 			isGoingUp = false;
 		}
 		int currentFloor = startFloor;
-		for (int i = startFloor; i < endFloor; i++) {
-			// if (this.isGoingUp.booleanValue() == false) { // more costly operation
+		int index = 0;
+		for (int i = startFloor; i <= endFloor; i++) {
 			if (!isGoingUp) {
-				currentFloor = endFloor - i;
-				continue;
+				currentFloor = endFloor - index;
+			} else {
+				currentFloor = i;
 			}
-			currentFloor = i;
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 
 			}
+			
 			System.out.println("Elevator #" + this.id + " is currently at floor " + currentFloor + ".");
 			this.currentFloor = currentFloor;
+			index++;
 		}
 	}
 
-	// q da vida
 	static boolean isGoingUp(int startFloor, int endFloor) {
 		return startFloor < endFloor ? true : (startFloor > endFloor ? false : null);
 	}
@@ -136,15 +147,7 @@ public class Elevator {
 
 		Request(int startingFloor, int requestedFloor, int passengersCount, int passengersWeight)
 				throws ElevatorException {
-			// if (!isValidFloor(startingFloor)) {
-			// throw new ElevatorException("Starting floor should be assigned with a
-			// non-negative value!");
-			// }
 			this.startingFloor = startingFloor;
-			// if (!isValidFloor(requestedFloor)) {
-			// throw new ElevatorException("Requested floor should be assigned with a
-			// non-negative value!");
-			// }
 			if (startingFloor == requestedFloor) {
 				throw new ElevatorException("Starting floor is the same as the requested floor!");
 			}

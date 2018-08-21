@@ -1,6 +1,7 @@
 package com.financial_times;
 
 import java.io.BufferedReader;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -11,7 +12,7 @@ import com.financial_times.Elevator.Request;
 
 final class RequestFetcher {
 	private Scanner scanner = new Scanner(System.in);
-	private LinkedList<Request> requestsList = new LinkedList();
+	private LinkedList<Request> requestsList;
 	private FileInputStream fileInputStream = null;
 	private BufferedReader reader = null;
 	private int startingFloor;
@@ -20,13 +21,13 @@ final class RequestFetcher {
 	private int passengersWeight;
 	
 	
-	
 	public void gatherRequestsFromConsole() throws ElevatorException {
 		reader = new BufferedReader(new InputStreamReader(System.in));
 		System.out.println("How many requests would you like to process?");
 		try {
-			int numberOfPeople = Integer.parseInt(reader.readLine());
-			for (int i = 0; i < numberOfPeople; i++) {
+			int numberOfRequests = Integer.parseInt(reader.readLine());
+			requestsList = new LinkedList<Request>();
+			for (int i = 0; i < numberOfRequests; i++) {
 				System.out.println("Enter request #" + (i+1) + " starting floor:");
 				startingFloor = Integer.parseInt(reader.readLine());
 				System.out.println("Enter request #" + (i + 1) + " desired floor:");
@@ -41,7 +42,8 @@ final class RequestFetcher {
 			}
 			
 		} catch (NumberFormatException | IOException e) {
-			// TODO: handle exception
+			System.out.println("Incorrect input! Please start again.");
+			this.gatherRequestsFromConsole();
 		}
 		
 	}
@@ -66,8 +68,7 @@ final class RequestFetcher {
 				passengersWeight = Integer.parseInt(strLine);
 				Elevator.Request request = new Request(startingFloor, requestedFloor, passengersCount, passengersWeight);
 				requestsList.add(request);
-				count++;
-				
+				count++;		
 			}
 			System.out.println("Added a total of " + count + " requests.");
 			reader.close();
@@ -78,5 +79,4 @@ final class RequestFetcher {
 		this.gatherRequestsFromConsole();
 		return requestsList;
 	}
-
 }

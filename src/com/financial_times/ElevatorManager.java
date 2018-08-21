@@ -1,10 +1,10 @@
 package com.financial_times;
 
-import java.io.StreamCorruptedException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Random;
+import java.util.Scanner;
 
 import com.financial_times.Elevator.Request;
 
@@ -58,6 +58,32 @@ public final class ElevatorManager {
 	public void execute() throws ElevatorException {
 		while (true) {
 			this.manageRequests(this.fetchRequests());
+			try
+			{
+				if (!continueRequests()) {
+					break;
+				}
+			} catch (ElevatorManagerException e)
+			{
+				e.getMessage();
+			}
+		}
+		System.out.println("Program closed.");
+	}
+	
+	private boolean continueRequests() throws ElevatorManagerException {
+		Scanner scanner = new Scanner(System.in);
+		System.out.println("Would you like to process more requests?\nY / N: ");
+		String userInput = scanner.nextLine();
+		if (userInput.equalsIgnoreCase("y")) {
+			return true;
+		}
+		else if (userInput.equalsIgnoreCase("n")) {
+			return false;
+		} else {
+			System.out.println("Incorrect input. Please use 'y' or 'n' as an answer.");
+			return continueRequests();
+			
 		}
 	}
 
@@ -73,22 +99,18 @@ public final class ElevatorManager {
 
 	private Elevator getMostOptimalElevator(Request request) {
 		Elevator mostOptimalElevator = null;
-		Boolean shouldBeGoingUp = Elevator.isGoingUp(request.startingFloor, request.requestedFloor);
 		int mostOptimalFloorDifference = this.maxFloor - this.minFloor; // necessary for defining most optimal elevator
 		while (mostOptimalElevator == null) {
 			for (Elevator e : this.elevatorList) {
 				if (e.canTakeMorePassengers()) {
-					if (e.getIsGoingUp() == shouldBeGoingUp || null == shouldBeGoingUp ) {
-						int currentFloorDifference = Math.abs(e.getCurrentFloor() - request.startingFloor);
-						if (currentFloorDifference <= mostOptimalFloorDifference) {
-							mostOptimalFloorDifference = currentFloorDifference;
-							mostOptimalElevator = e;
-						}
+					int currentFloorDifference = Math.abs(e.getCurrentFloor() - request.startingFloor);
+					if (currentFloorDifference <= mostOptimalFloorDifference) {
+						mostOptimalFloorDifference = currentFloorDifference;
+						mostOptimalElevator = e;
 					}
 				}
 			}
 		}
 		return mostOptimalElevator;
 	}
-
 }
